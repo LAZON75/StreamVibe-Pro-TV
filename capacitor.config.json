@@ -1,0 +1,8 @@
+{
+  "appId": "com.streamvibe.pro",
+  "appName": "StreamVibe Pro",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
