@@ -666,7 +666,7 @@ function renderSide(){
  if(tab==='c'){
   L.innerHTML=LANGS.map(x=>item(BASE+'languages/'+x[0]+'.m3u',x[0],x[1],x[ix+1]||x[2])).join('')+COUNTRIES.map(x=>item(BASE+'countries/'+x[0]+'.m3u',x[0],flag(x[0]),x[ix])).join('');
  }else if(tab==='k'){
-  L.innerHTML=CATS.filter(x=>x[0]!=='movies'&&x[0]!=='series').map(x=>item(BASE+'categories/'+x[0]+'.m3u',x[0],x[1],x[ix+1])).join('');
+  L.innerHTML=CATS.map(x=>item(BASE+'categories/'+x[0]+'.m3u',x[0],x[1],x[ix+1])).join('');
  }else{
   cur=tab==='f'?favs:recent;curLabel=tab==='f'?t('tFav'):t('tRecent');curKey='';renderCh();
   L.innerHTML=`<div class="ld">${cur.length?'':t('empty')}</div>`;
