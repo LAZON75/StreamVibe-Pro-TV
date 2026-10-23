@@ -323,6 +323,52 @@ html.svp-force-fullscreen #live .vid video {
   #live.vod-mode #chList .ch { display:none !important; }
 }
 
+
+/* ===== NEW MOVIES ===== */
+#newm{display:none;position:fixed;inset:0;z-index:3500;background:var(--bg);color:var(--txt);overflow-y:auto;padding:calc(18px + env(safe-area-inset-top)) 4vw 30px}
+.nmtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.nmtop h2{font-size:20px}.nmtop input{width:56px;text-align:center;border-radius:8px;padding:8px}
+.nmtabs{display:flex;gap:10px;margin-bottom:14px}.nmtabs .btn{flex:1}
+#nmKey{display:none;background:var(--side);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px;line-height:1.8;font-size:14px}
+#nmKey .inp{width:100%;margin:10px 0;padding:10px;border-radius:10px}
+#nmGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.nmc{cursor:pointer;border-radius:12px;overflow:hidden;background:var(--side);border:1px solid var(--bd)}
+.nmc:focus,.nmc:hover{outline:3px solid var(--pri)}
+.nmc img{width:100%;display:block;aspect-ratio:2/3;object-fit:cover}
+.nmt{padding:8px;font-size:12px;font-weight:600}
+#nmDet{display:none;position:fixed;inset:0;z-index:3600;background:rgba(0,0,0,.85);justify-content:center;align-items:center}
+#nmDetBody{max-height:88vh;overflow-y:auto}#nmDetBody p{white-space:pre-line;margin:10px 0;line-height:1.7;font-size:14px}
+#nmDetBody .btn{width:100%;margin-top:8px}.nmtabs .btn[data-tab]:not(.on){background:rgba(255,255,255,.1);color:var(--txt)}
+.nmtabs .btn.on{outline:2px solid var(--pri)}.nmtabs .inp{padding:10px;border-radius:10px;min-width:0}
+.nmn{color:var(--mut);font-size:12px;margin-top:14px}
+
+/* ===== VOD PLAYER OVERLAY (movies/series): the player panel was hidden, so only sound played ===== */
+.vodx{display:none}
+#live.vod-mode.vod-playing .pl{display:flex!important;position:fixed;inset:0;z-index:2500;background:#000;padding:calc(8px + env(safe-area-inset-top)) 0 calc(8px + env(safe-area-inset-bottom))}
+#live.vod-mode.vod-playing .pl .vid{flex:1;margin:0 6px;aspect-ratio:auto;height:auto;border-radius:12px;background:#000}
+#live.vod-mode.vod-playing .pl .vid video{width:100%;height:100%;object-fit:contain;background:#000}
+#live.vod-mode.vod-playing .vodx{display:inline-block}
+#live.vod-mode.vod-playing #bMenu,#live.vod-mode.vod-playing #bDead,#live.vod-mode.vod-playing #bCompact{display:none}
+
+#v::cue{font-size:var(--sz,100%);color:var(--sc,#fff);background:rgba(0,0,0,.6)}
+.srow{display:flex;gap:8px;align-items:center;margin-bottom:12px}.srow>label{flex:0 0 44%;font-size:13px}.srow select,.srow input{flex:1;min-width:0}
+#mSub .box{max-height:88vh;overflow-y:auto}
+
+/* ===== ADAPTIVE LAYER: phone / computer / TV ===== */
+html[data-dev=tv]{cursor:none}
+html[data-dev=tv] :focus{outline:4px solid #22d3ee!important;outline-offset:2px;box-shadow:0 0 22px rgba(34,211,238,.55)}
+html[data-dev=tv] .cb,html[data-dev=tv] .btn,html[data-dev=tv] .sb,html[data-dev=tv] .tab,html[data-dev=tv] .pbp{font-size:18px}
+html[data-dev=tv] .ch .n,html[data-dev=tv] .it,html[data-dev=tv] .np{font-size:19px}
+html[data-dev=tv] .pbc h3,html[data-dev=desktop] .pbc h3{font-size:clamp(22px,2.6vw,36px)}html[data-dev=tv] .pbc p{font-size:clamp(14px,1.6vw,19px)}
+html[data-dev=tv] .pbc,html[data-dev=desktop] .pbc{flex:1 1 0;min-width:0;max-width:none}
+html[data-dev=tv] .nmt{font-size:16px}html[data-dev=tv] .nmc:focus{transform:scale(1.05)}
+html[data-dev=tv] .nmtop input,html[data-dev=tv] #bRotate,html[data-dev=desktop] #bRotate,html[data-dev=tv] #nmQ{display:none}
+html[data-dev=tv] .nmtabs .btn[data-tab]{font-size:18px}
+html[data-dev=desktop] #newm{padding-inline:max(4vw,calc((100vw - 1400px)/2))}
+html[data-dev=desktop] #nmGrid,html[data-dev=tv] #nmGrid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+html[data-dev=desktop] .pbcards,html[data-dev=tv] .pbcards{gap:clamp(14px,2vw,28px)}
+html[data-dev=desktop] .box,html[data-dev=tv] .box{max-width:560px}
+html[data-dev=desktop] .nmc:hover{transform:translateY(-3px)}
 </style>
 </head>
 <body onload="init()">
@@ -338,6 +384,7 @@ html.svp-force-fullscreen #live .vid video {
   <div class="pbc f" tabindex="0" role="button" data-pb="live"><h3 data-i="liveTV"></h3><p data-i="liveSub"></p><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
   <div class="pbc" tabindex="0" role="button" data-pb="movies"><h3 data-i="movies"></h3><p data-i="movSub"></p><svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="1.3"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M16 4v16M3 9h5M3 15h5M16 9h5M16 15h5"/></svg></div>
   <div class="pbc" tabindex="0" role="button" data-pb="series"><h3 data-i="series"></h3><p data-i="serSub"></p><svg viewBox="0 0 24 24" fill="none" stroke="#8b7cf6" stroke-width="1.3"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 9l5 2.5-5 2.5zM8 21h8"/></svg></div>
+  <div class="pbc" tabindex="0" role="button" data-nm="1" onclick="openNew()" onkeydown="if(event.key==='Enter')openNew()"><h3 data-i="nmTitle"></h3><p data-i="nmSub"></p><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.3"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg></div>
  </div>
  <div class="pbbot"><div class="pbpills">
   <div class="pbp" id="pbR" tabindex="0" role="button" data-pb="cont" style="display:none">⏯ <span data-i="cont"></span>: <b id="pbRn"></b></div>
@@ -345,6 +392,16 @@ html.svp-force-fullscreen #live .vid video {
   <div class="pbp" tabindex="0" role="button" data-pb="live" data-tb="r">🕘 <span data-i="tRecent"></span></div>
  </div><div class="pbclock"></div></div>
  <div class="pbft" data-i="foot"></div>
+</div>
+
+<div id="newm">
+ <div class="nmtop"><b onclick="closeNew()" style="cursor:pointer" data-i="nmBack"></b><h2>🎬 <span data-i="nmTitle"></span></h2><input class="inp" id="nmCc" dir="ltr" maxlength="2" title="MA / FR / US" onchange="nmCountrySet(this.value)"></div>
+ <div class="nmtabs"><button class="btn" data-tab="now_playing" onclick="nmTab('now_playing')" data-i="nmNow"></button><button class="btn" data-tab="upcoming" onclick="nmTab('upcoming')" data-i="nmSoon"></button><button class="btn" data-tab="watch" onclick="nmTab('watch')" data-i="nmWatch"></button></div>
+ <div class="nmtabs"><input class="inp" id="nmQ" style="flex:1" data-ph="nmSearch" onkeydown="if(event.key==='Enter')nmSearch()"><button class="btn" style="flex:0 0 52px" onclick="nmSearch()">🔍</button></div>
+ <div id="nmKey"><span data-i="nmKeyHelp"></span><input class="inp" id="nmKeyIn" dir="ltr" placeholder="API Key"><button class="btn" style="width:100%" onclick="nmSaveKey()" data-i="save"></button></div>
+ <div id="nmGrid"></div>
+ <p class="nmn" data-i="nmFoot"></p>
+ <div id="nmDet" onclick="if(event.target===this)this.style.display='none'"><div class="box" id="nmDetBody"></div></div>
 </div>
 
 <div id="settings">
@@ -358,12 +415,24 @@ html.svp-force-fullscreen #live .vid video {
   <div class="sb" onclick="openM('mLang')">🌐 <span data-i="lang"></span></div>
   <div class="sb" onclick="toggleTheme()">🎨 <span data-i="theme"></span></div>
   <div class="sb" id="bExt" onclick="toggleExt()">▶️ <span data-i="ext"></span></div>
+  <div class="sb" onclick="devCycle()">🖥️ <span><span data-i="devMode"></span>: <b id="devNow"></b></span></div>
   <div class="sb" onclick="runDiagnostics()">🩺 <span data-i="diagnostics"></span></div>
   <div class="sb" onclick="changePin()">🔑 <span data-i="changePin"></span></div>
   <div class="sb" onclick="clearHist()">🗑️ <span data-i="clear"></span></div>
  </div>
 </div>
 
+<div class="ov" id="mSub"><div class="box">
+ <h3><span data-i="subTitle"></span><b onclick="closeM('mSub')">✕</b></h3>
+ <div class="srow"><select class="inp" id="subSel" onchange="subApply(this.value)"></select></div>
+ <div class="srow"><button class="btn" style="width:100%" onclick="$('subF').click()" data-i="subFile"></button><input type="file" id="subF" accept=".srt,.vtt,.txt,text/*" style="display:none" onchange="subFile(this)"></div>
+ <div class="srow"><input class="inp" id="subU" dir="ltr" data-ph="subUrlPh"><button class="btn" style="flex:0 0 auto" onclick="subUrl()" data-i="subLoad"></button></div>
+ <div class="srow"><label data-i="subSize"></label><input type="range" id="subSz" min="60" max="240" value="100" oninput="subStyle()"></div>
+ <div class="srow"><label data-i="subColor"></label><select class="inp" id="subCl" onchange="subStyle()"><option value="#ffffff">⚪</option><option value="#ffe14d">🟡</option><option value="#4dd9ff">🔵</option><option value="#7dff7d">🟢</option></select></div>
+ <div class="srow"><label data-i="subDelay"></label><button class="btn" onclick="subDelayAdd(-0.5)">−</button><b id="subDelay" style="min-width:48px;text-align:center">0.0</b><button class="btn" onclick="subDelayAdd(0.5)">+</button></div>
+ <div class="srow"><label data-i="subSpeed"></label><select class="inp" id="spd" onchange="$('v').playbackRate=+this.value"><option>0.5</option><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option><option>2</option></select></div>
+ <div class="srow" id="audRow" style="display:none"><label data-i="subAudio"></label><select class="inp" id="subAud" onchange="if(hls)hls.audioTrack=+this.value"></select></div>
+</div></div>
 <div class="ov" id="mPl"><div class="box">
  <h3><span data-i="addPl"></span><b onclick="closeM('mPl')">✕</b></h3>
  <input class="inp" id="mUrl" placeholder="https://example.com/list.m3u" dir="ltr">
@@ -404,6 +473,8 @@ html.svp-force-fullscreen #live .vid video {
  </div>
  <div class="pl">
   <div class="bar">
+   <button class="cb vodx" onclick="closeVodPlayer()">✕</button>
+   <button class="cb vodx" onclick="subOpen()">CC</button><button class="cb vodx" onclick="$('v').currentTime-=10">⏪10</button><button class="cb vodx" onclick="$('v').currentTime+=10">10⏩</button>
    <button class="cb" onclick="$('side').classList.toggle('show')" id="bMenu">☰</button>
    <select class="cb" id="qSel" onchange="setQ(this.value)"><option value="-1">Auto</option></select>
    <button class="cb" onclick="toggleCompactPlayer()" id="bCompact" title="تصغير/تكبير المشغل" aria-label="تصغير أو تكبير المشغل">▁</button>
@@ -432,9 +503,9 @@ const CATS=[["sports","⚽","الرياضة","Sports"],["news","📰","الأخ�
 const LANGS=[["ara","🌍","كل القنوات العربية","Toutes arabes"],["fra","🇫🇷","الفرنسية","Français"],["eng","🇬🇧","الإنجليزية","English"],["spa","🇪🇸","الإسبانية","Español"],["tur","🇹🇷","التركية","Türkçe"]];
 
 const T={
-ar:{search:"ابحث عن قناة...",movies:"أفلام",fav:"المفضلة",settings:"الإعدادات",back:"← رجوع",addPl:"إضافة قائمة M3U",par:"الرقابة الأبوية",lang:"اللغة",theme:"المظهر",ext:"مشغل خارجي",clear:"مسح السجل",load:"تحميل",save:"حفظ",pin:"رمز الحماية",ok:"تأكيد",tCountries:"الدول",tCats:"الفئات",tFav:"المفضلة",tRecent:"الأخيرة",ch:"قناة",empty:"لا توجد قنوات",loading:"جارٍ التحميل...",pickList:"اختر دولة أو فئة من القائمة",err:"تعذّر تشغيل القناة (قد تكون متوقفة أو محجوبة). جرّب قناة أخرى.",pinBad:"الرمز غير صحيح",pinNew:"اختر رمزاً من 4 أرقام",live:"بث مباشر",cleared:"تم المسح",fail:"فشل التحميل",cont:"تابع المشاهدة",foot:"القنوات من قوائم iptv-org المجانية العامة · StreamVibe Pro",diagnostics:"فحص الاتصال والبث",changePin:"تغيير رمز PIN",home:"🏠 الرئيسية",liveTV:"القنوات المباشرة",series:"مسلسلات",liveSub:"مباشر الآن",movSub:"أفلام على مدار الساعة",serSub:"مسلسلات متواصلة"},
-fr:{search:"Rechercher une chaîne...",movies:"Films",fav:"Favoris",settings:"Paramètres",back:"← Retour",addPl:"Ajouter une liste M3U",par:"Contrôle parental",lang:"Langue",theme:"Thème",ext:"Lecteur externe",clear:"Effacer l'historique",load:"Charger",save:"Enregistrer",pin:"Code PIN",ok:"Valider",tCountries:"Pays",tCats:"Catégories",tFav:"Favoris",tRecent:"Récents",ch:"chaînes",empty:"Aucune chaîne",loading:"Chargement...",pickList:"Choisissez un pays ou une catégorie",err:"Lecture impossible (chaîne hors ligne ou bloquée). Essayez une autre.",pinBad:"Code incorrect",pinNew:"Choisissez un code à 4 chiffres",live:"En direct",cleared:"Effacé",fail:"Échec du chargement",cont:"Reprendre",foot:"Chaînes issues des listes publiques gratuites iptv-org · StreamVibe Pro",diagnostics:"Tester connexion et lecture",changePin:"Changer le code PIN",home:"🏠 Accueil",liveTV:"TV en direct",series:"Séries",liveSub:"En direct",movSub:"Films 24h/24",serSub:"Séries en continu"},
-en:{search:"Search a channel...",movies:"Movies",fav:"Favorites",settings:"Settings",back:"← Back",addPl:"Add M3U Playlist",par:"Parental Control",lang:"Language",theme:"Theme",ext:"External Player",clear:"Clear History",load:"Load",save:"Save",pin:"PIN Code",ok:"Confirm",tCountries:"Countries",tCats:"Categories",tFav:"Favorites",tRecent:"Recent",ch:"channels",empty:"No channels",loading:"Loading...",pickList:"Pick a country or category",err:"Cannot play this channel (offline or blocked). Try another.",pinBad:"Wrong PIN",pinNew:"Choose a 4-digit PIN",live:"Live",cleared:"Cleared",fail:"Load failed",cont:"Continue",foot:"Channels from free public iptv-org lists · StreamVibe Pro",diagnostics:"Connection & playback test",changePin:"Change PIN",home:"🏠 Home",liveTV:"Live TV",series:"Series",liveSub:"Live now",movSub:"Movies 24/7",serSub:"Non-stop series"}
+ar:{devMode:"نمط العرض",dev_auto:"تلقائي",dev_phone:"هاتف",dev_desktop:"كمبيوتر",dev_tv:"تلفاز",subTitle:"الترجمة والإعدادات",subOff:"بدون ترجمة",subFile:"📂 اختر ملف ترجمة (SRT / VTT)",subUrlPh:"أو رابط ملف ترجمة...",subLoad:"تحميل",subSize:"حجم الخط",subColor:"لون الخط",subDelay:"مزامنة الترجمة (ثانية)",subSpeed:"سرعة التشغيل",subAudio:"لغة الصوت",subResumed:"تم الاستئناف من آخر نقطة وصلت لها",subBad:"تعذر قراءة ملف الترجمة",subLbl:"الترجمة",nmWatch:"⭐ قائمتي",nmSearch:"ابحث عن فيلم...",nmAdd:"⭐ أضف إلى قائمتي",nmRemove:"✖ احذف من قائمتي",nmEmpty:"قائمتك فارغة. افتح أي فيلم واضغط «أضف إلى قائمتي».",exitHint:"اضغط رجوع مرة أخرى للخروج",nmTitle:"أفلام جديدة",nmSub:"الأغلفة والتقييمات والمقاطع الدعائية",nmBack:"→ رجوع",nmNow:"في السينما",nmSoon:"قريبًا",nmKeyHelp:"لعرض الأفلام الجديدة ضع مفتاح TMDB المجاني: أنشئ حسابًا في themoviedb.org ثم Settings ← API ← انسخ «API Key (v3 auth)».",nmFoot:"This product uses the TMDB API but is not endorsed or certified by TMDB. معلومات المشاهدة من JustWatch عبر TMDB. التطبيق لا يعرض أفلامًا، بل يدلّك على أماكن المشاهدة القانونية.",nmNoRes:"لا توجد نتائج",nmFail:"تعذر التحميل. تأكد من المفتاح والإنترنت",nmNoDesc:"لا يوجد وصف بعد.",nmTrailer:"▶ المقطع الدعائي",nmWhere:"📺 أين أشاهده قانونيًا",nmNoTrailer:"لا يوجد مقطع دعائي",nmErr:"خطأ",nmNoProv:"لا تتوفر معلومات المشاهدة لبلدك بعد",nmAvail:"متاح عبر",search:"ابحث عن قناة...",movies:"أفلام",fav:"المفضلة",settings:"الإعدادات",back:"← رجوع",addPl:"إضافة قائمة M3U",par:"الرقابة الأبوية",lang:"اللغة",theme:"المظهر",ext:"مشغل خارجي",clear:"مسح السجل",load:"تحميل",save:"حفظ",pin:"رمز الحماية",ok:"تأكيد",tCountries:"الدول",tCats:"الفئات",tFav:"المفضلة",tRecent:"الأخيرة",ch:"قناة",empty:"لا توجد قنوات",loading:"جارٍ التحميل...",pickList:"اختر دولة أو فئة من القائمة",err:"تعذّر تشغيل القناة (قد تكون متوقفة أو محجوبة). جرّب قناة أخرى.",pinBad:"الرمز غير صحيح",pinNew:"اختر رمزاً من 4 أرقام",live:"بث مباشر",cleared:"تم المسح",fail:"فشل التحميل",cont:"تابع المشاهدة",foot:"القنوات من قوائم iptv-org المجانية العامة · StreamVibe Pro",diagnostics:"فحص الاتصال والبث",changePin:"تغيير رمز PIN",home:"🏠 الرئيسية",liveTV:"القنوات المباشرة",series:"مسلسلات",liveSub:"مباشر الآن",movSub:"أفلام على مدار الساعة",serSub:"مسلسلات متواصلة"},
+fr:{devMode:"Mode d\'affichage",dev_auto:"Auto",dev_phone:"Téléphone",dev_desktop:"Ordinateur",dev_tv:"Télévision",subTitle:"Sous-titres et réglages",subOff:"Sans sous-titres",subFile:"📂 Choisir un fichier de sous-titres (SRT / VTT)",subUrlPh:"ou lien vers un fichier de sous-titres...",subLoad:"Charger",subSize:"Taille du texte",subColor:"Couleur du texte",subDelay:"Synchronisation (secondes)",subSpeed:"Vitesse de lecture",subAudio:"Langue audio",subResumed:"Lecture reprise là où vous vous êtes arrêté",subBad:"Impossible de lire le fichier de sous-titres",subLbl:"Sous-titres",nmWatch:"⭐ Ma liste",nmSearch:"Rechercher un film...",nmAdd:"⭐ Ajouter à ma liste",nmRemove:"✖ Retirer de ma liste",nmEmpty:"Votre liste est vide. Ouvrez un film et appuyez sur « Ajouter à ma liste ».",exitHint:"Appuyez encore sur Retour pour quitter",nmTitle:"Nouveaux films",nmSub:"Affiches, notes et bandes-annonces",nmBack:"→ Retour",nmNow:"Au cinéma",nmSoon:"Bientôt",nmKeyHelp:"Pour afficher les nouveaux films, ajoutez votre clé TMDB gratuite : créez un compte sur themoviedb.org puis Settings → API → copiez « API Key (v3 auth) ».",nmFoot:"This product uses the TMDB API but is not endorsed or certified by TMDB. Infos de visionnage via JustWatch (TMDB). L\'application ne diffuse pas de films : elle indique où les regarder légalement.",nmNoRes:"Aucun résultat",nmFail:"Chargement impossible. Vérifiez la clé et la connexion",nmNoDesc:"Pas encore de description.",nmTrailer:"▶ Bande-annonce",nmWhere:"📺 Où le regarder légalement",nmNoTrailer:"Pas de bande-annonce",nmErr:"Erreur",nmNoProv:"Infos de visionnage pas encore disponibles pour votre pays",nmAvail:"Disponible sur",search:"Rechercher une chaîne...",movies:"Films",fav:"Favoris",settings:"Paramètres",back:"← Retour",addPl:"Ajouter une liste M3U",par:"Contrôle parental",lang:"Langue",theme:"Thème",ext:"Lecteur externe",clear:"Effacer l'historique",load:"Charger",save:"Enregistrer",pin:"Code PIN",ok:"Valider",tCountries:"Pays",tCats:"Catégories",tFav:"Favoris",tRecent:"Récents",ch:"chaînes",empty:"Aucune chaîne",loading:"Chargement...",pickList:"Choisissez un pays ou une catégorie",err:"Lecture impossible (chaîne hors ligne ou bloquée). Essayez une autre.",pinBad:"Code incorrect",pinNew:"Choisissez un code à 4 chiffres",live:"En direct",cleared:"Effacé",fail:"Échec du chargement",cont:"Reprendre",foot:"Chaînes issues des listes publiques gratuites iptv-org · StreamVibe Pro",diagnostics:"Tester connexion et lecture",changePin:"Changer le code PIN",home:"🏠 Accueil",liveTV:"TV en direct",series:"Séries",liveSub:"En direct",movSub:"Films 24h/24",serSub:"Séries en continu"},
+en:{devMode:"Display mode",dev_auto:"Auto",dev_phone:"Phone",dev_desktop:"Computer",dev_tv:"TV",subTitle:"Subtitles and settings",subOff:"Subtitles off",subFile:"📂 Choose a subtitle file (SRT / VTT)",subUrlPh:"or a subtitle file link...",subLoad:"Load",subSize:"Text size",subColor:"Text color",subDelay:"Sync (seconds)",subSpeed:"Playback speed",subAudio:"Audio language",subResumed:"Resumed from where you stopped",subBad:"Could not read the subtitle file",subLbl:"Subtitles",nmWatch:"⭐ My list",nmSearch:"Search a movie...",nmAdd:"⭐ Add to my list",nmRemove:"✖ Remove from my list",nmEmpty:"Your list is empty. Open a movie and tap the ⭐ button.",exitHint:"Press back again to exit",nmTitle:"New movies",nmSub:"Posters, ratings and trailers",nmBack:"→ Back",nmNow:"In theaters",nmSoon:"Coming soon",nmKeyHelp:"To show new movies, add your free TMDB key: create an account at themoviedb.org, then Settings → API → copy \"API Key (v3 auth)\".",nmFoot:"This product uses the TMDB API but is not endorsed or certified by TMDB. Watch info from JustWatch via TMDB. The app does not stream movies; it points you to where to watch them legally.",nmNoRes:"No results",nmFail:"Could not load. Check the key and your connection",nmNoDesc:"No description yet.",nmTrailer:"▶ Trailer",nmWhere:"📺 Where to watch legally",nmNoTrailer:"No trailer available",nmErr:"Error",nmNoProv:"Watch info not available for your country yet",nmAvail:"Available on",search:"Search a channel...",movies:"Movies",fav:"Favorites",settings:"Settings",back:"← Back",addPl:"Add M3U Playlist",par:"Parental Control",lang:"Language",theme:"Theme",ext:"External Player",clear:"Clear History",load:"Load",save:"Save",pin:"PIN Code",ok:"Confirm",tCountries:"Countries",tCats:"Categories",tFav:"Favorites",tRecent:"Recent",ch:"channels",empty:"No channels",loading:"Loading...",pickList:"Pick a country or category",err:"Cannot play this channel (offline or blocked). Try another.",pinBad:"Wrong PIN",pinNew:"Choose a 4-digit PIN",live:"Live",cleared:"Cleared",fail:"Load failed",cont:"Continue",foot:"Channels from free public iptv-org lists · StreamVibe Pro",diagnostics:"Connection & playback test",changePin:"Change PIN",home:"🏠 Home",liveTV:"Live TV",series:"Series",liveSub:"Live now",movSub:"Movies 24/7",serSub:"Non-stop series"}
 };
 let dead=[],showDead=false,mode='live';localStorage.removeItem('dead');
 let lang=LS.g('lang','ar'),tab='c',cur=[],curLabel='',curKey='',hls=null,favs=LS.g('favs',[]),recent=LS.g('recent',[]),cache={},pending=null,activeUrl='',view=[];
@@ -563,6 +634,7 @@ function checkPin(){
  if($('pinIn').value===LS.g('pin','1234')){closeM('mPin');pending&&pending()}else alert(t('pinBad'));
 }
 function stopLivePlayback(){
+ $('live').classList.remove('vod-playing');
  // Stop playback completely when leaving Live TV, while keeping the saved last channel.
  play.n=(play.n||0)+1;clearTimeout(play.t);
  if(hls){try{hls.destroy()}catch(e){}hls=null}
@@ -578,7 +650,8 @@ function goHome(){
  renderHome();
  setTimeout(()=>{const f=document.querySelector('.pbc');f&&f.focus({preventScroll:true})},60);
 }
-function closeLive(){goHome()}
+function closeVodPlayer(){stopLivePlayback()}
+function closeLive(){if($('live').classList.contains('vod-playing'))closeVodPlayer();else goHome()}
 function quick(cat){openSection('live','k',()=>loadList(BASE+'categories/'+cat+'.m3u',cat))}
 
 function renderSide(){
@@ -652,7 +725,10 @@ async function loadList(u,label){
  toast('⏳ '+label);
  curKey=u;curLabel=label;cur=[];$('chList').innerHTML=`<div class="ld">${t('loading')}</div>`;renderSide2();
  try{
-  if(!cache[u]){const arr=parseM3U(await fetchText(u));if(!arr.length)throw 'empty list';cache[u]=arr}
+  if(!cache[u]){let arr=[];const vk=u===VOD_URLS.movies?'movies':u===VOD_URLS.series?'series':'';
+  try{arr=parseM3U(await fetchText(u))}catch(e){if(!vk)throw e}
+  if(vk)arr=arr.concat(await archiveItems(vk));
+  if(!arr.length)throw 'empty list';cache[u]=arr}
   if(curKey!==u)return;
   cur=cache[u];renderCh();if(mode==='movies'||mode==='series')renderSide();else renderSide2();toast('✔ '+cur.length);
  }catch(e){if(curKey!==u)return;toast('✖ '+String((e&&e.message)||e));cur=[];$('chList').innerHTML=`<div class="ld">${t('fail')}<br><small>${esc(String((e&&e.message)||e))}</small></div>`}
@@ -671,10 +747,13 @@ function toggleFav(i){
 }
 
 function play(c){
- if(!c)return;activeUrl=c.url;showIB(c);
+ if(!c)return;
+ if(String(c.url).startsWith('archive:')){archiveResolve(c).then(r=>{if(r)play(r)});return}activeUrl=c.url;showIB(c);
  const u=(location.protocol==='https:'&&c.url.startsWith('http://'))?c.url.replace('http://','https://'):c.url;
  if(mode==='live'){recent=[c,...recent.filter(x=>x.url!==c.url)].slice(0,30);LS.s('recent',recent);}
  if(LS.g('ext',false)){window.open(c.url,'_blank');return}
+ if(mode==='movies'||mode==='series')$('live').classList.add('vod-playing');
+ play.resume=(mode==='movies'||mode==='series')?(LS.g('pos',{})[c.url]||0):0;subReset();
  $('np').innerHTML=`<b>${esc(c.name)}</b><span>● ${t(mode==='movies'?'movies':mode==='series'?'series':'live')}</span>`;
  const v=$('v'),m=$('msg'),tok=play.n=(play.n||0)+1,stale=()=>tok!==play.n;
  const show=x=>{m.textContent=x;m.style.display='flex'};
@@ -801,6 +880,207 @@ document.addEventListener('keydown',e=>{
 });
 function toast(x){const b=$('toast');b.textContent=x;b.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>b.classList.remove('on'),3500)}
 window.onerror=(m,u,l)=>{toast('JS: '+m+' @'+l)};
+
+/* ===== NEW MOVIES (TMDB) ===== */
+const NM={tab:'now_playing'};
+const nmKey=()=>LS.g('tmdbKey','');
+const nmCountry=()=>LS.g('nmCountry',(((navigator.language||'').match(/-([A-Za-z]{2})(?![A-Za-z])/)||[])[1]||'US').toUpperCase());
+function openNew(){$('newm').style.display='block';$('nmCc').value=nmCountry();nmLoad()}
+function closeNew(){$('newm').style.display='none';$('nmDet').style.display='none'}
+function nmTab(t){NM.tab=t;nmLoad()}
+function nmCountrySet(v){v=(v||'').trim().toUpperCase();if(v.length===2){LS.s('nmCountry',v);nmLoad()}}
+function nmSaveKey(){const k=$('nmKeyIn').value.trim();if(k){LS.s('tmdbKey',k);nmLoad()}}
+async function tm(path,q=''){const L=lang==='fr'?'fr-FR':lang==='en'?'en-US':'ar';const r=await fetch('https://api.themoviedb.org/3'+path+'?api_key='+encodeURIComponent(nmKey())+'&language='+L+q);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+function nmRender(list){
+ const g=$('nmGrid');g.textContent='';
+ list.filter(m=>m.poster_path).forEach(m=>{
+  const c=document.createElement('div');c.className='nmc';c.tabIndex=0;
+  const im=document.createElement('img');im.loading='lazy';im.alt=m.title;im.src='https://image.tmdb.org/t/p/w342'+m.poster_path;
+  const tt=document.createElement('div');tt.className='nmt';tt.textContent=m.title+(m.vote_average?' ⭐ '+m.vote_average.toFixed(1):'');
+  c.append(im,tt);c.onclick=()=>nmDetail(m);c.onkeydown=e=>{if(e.key==='Enter')nmDetail(m)};g.append(c)});
+ if(!g.children.length)g.textContent=t(NM.tab==='watch'?'nmEmpty':'nmNoRes')
+}
+async function nmLoad(){
+ const g=$('nmGrid');
+ document.querySelectorAll('.nmtabs .btn[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===NM.tab));
+ if(NM.tab==='watch'){$('nmKey').style.display='none';nmRender(LS.g('nmWatch',[]));return}
+ g.textContent='';
+ if(!nmKey()){$('nmKey').style.display='block';return}
+ $('nmKey').style.display='none';g.textContent='...';
+ try{
+  const d=NM.tab==='search'?await tm('/search/movie','&include_adult=false&query='+encodeURIComponent(NM.q||'')):await tm('/movie/'+NM.tab,'&region='+nmCountry());
+  nmRender(d.results||[])
+ }catch(e){g.textContent=t('nmFail')+' ('+e.message+')';if(/401/.test(e.message)){LS.s('tmdbKey','');$('nmKey').style.display='block'}}
+}
+function nmSearch(){const q=$('nmQ').value.trim();if(!q)return;NM.q=q;NM.tab='search';nmLoad()}
+const nmInList=id=>LS.g('nmWatch',[]).some(x=>x.id===id);
+function nmToggle(m){let L=LS.g('nmWatch',[]);if(nmInList(m.id))L=L.filter(x=>x.id!==m.id);else L.unshift({id:m.id,title:m.title,poster_path:m.poster_path,vote_average:m.vote_average,release_date:m.release_date,overview:m.overview});LS.s('nmWatch',L)}
+function nmDetail(m){
+ const d=$('nmDet'),b=$('nmDetBody');d.style.display='flex';b.textContent='';
+ const h=document.createElement('h3');h.textContent=m.title;
+ const p=document.createElement('p');p.textContent=(m.release_date||'')+'\n'+(m.overview||t('nmNoDesc'));
+ const bt=document.createElement('button');bt.className='btn';bt.textContent=t('nmTrailer');
+ const bw=document.createElement('button');bw.className='btn';bw.textContent=t('nmWhere');
+ const bl=document.createElement('button');bl.className='btn';
+ const lt=()=>{bl.textContent=t(nmInList(m.id)?'nmRemove':'nmAdd')};lt();
+ bl.onclick=()=>{nmToggle(m);lt();if(NM.tab==='watch')nmRender(LS.g('nmWatch',[]))};
+ const n=document.createElement('p');n.className='nmn';
+ b.append(h,p,bt,bw,bl,n);
+ bt.onclick=async()=>{try{const v=(await tm('/movie/'+m.id+'/videos')).results||[];const t=v.find(x=>x.site==='YouTube'&&x.type==='Trailer')||v.find(x=>x.site==='YouTube');t?window.open('https://www.youtube.com/watch?v='+t.key,'_blank'):toast(t('nmNoTrailer'))}catch(e){toast(t('nmErr')+': '+e.message)}};
+ bw.onclick=async()=>{try{const r=((await tm('/movie/'+m.id+'/watch/providers')).results||{})[nmCountry()];
+  if(!r){n.textContent=t('nmNoProv')+' ('+nmCountry()+')';return}
+  const names=[...new Set([...(r.flatrate||[]),...(r.rent||[]),...(r.buy||[])].map(x=>x.provider_name))];
+  n.textContent=t('nmAvail')+': '+(names.join(lang==='ar'?'، ':', ')||'—');if(r.link)window.open(r.link,'_blank')}catch(e){toast(t('nmErr')+': '+e.message)}};
+}
+
+/* ===== ANDROID BACK BUTTON: go back one step instead of leaving the app ===== */
+function ensureSentinel(){try{if(!(history.state&&history.state.a))history.pushState({a:1},'')}catch(e){}}
+function closeTopLayer(){
+ const vis=(id,d)=>{const e=$(id);return e&&e.style.display===d};
+ if(vis('nmDet','flex')){$('nmDet').style.display='none';return true}
+ if(vis('newm','block')){closeNew();return true}
+ const ov=[...document.querySelectorAll('.ov')].find(e=>e.style.display==='flex');
+ if(ov){closeM(ov.id);return true}
+ if(vis('settings','block')){$('settings').style.display='none';return true}
+ if(document.fullscreenElement||document.documentElement.classList.contains('svp-force-fullscreen')){fs();return true}
+ if($('live').classList.contains('vod-playing')){closeVodPlayer();return true}
+ if($('side').classList.contains('show')){$('side').classList.remove('show');return true}
+ if(vis('live','grid')){goHome();return true}
+ return false;
+}
+try{history.replaceState({r:1},'');history.pushState({a:1},'')}catch(e){}
+window.addEventListener('popstate',()=>{
+ if(closeTopLayer()){ensureSentinel();return}
+ toast(t('exitHint'));setTimeout(ensureSentinel,2000);
+});
+['click','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,ensureSentinel,true));
+
+/* ===== SUBTITLES, AUDIO TRACKS, SPEED, RESUME ===== */
+const SUB={ext:[],nat:[],cur:'-1',delay:0};
+function subReset(){SUB.ext.forEach(x=>{try{x.tr.mode='disabled'}catch(e){}});SUB.ext=[];SUB.nat=[];SUB.cur='-1';SUB.delay=0;const d=$('subDelay');if(d)d.textContent='0.0'}
+function subOpen(){subList();openM('mSub')}
+function subList(){
+ const v=$('v'),sel=$('subSel');sel.textContent='';
+ const add=(x,l)=>{const o=document.createElement('option');o.value=x;o.textContent=l;sel.append(o)};
+ add('-1',t('subOff'));
+ if(hls&&hls.subtitleTracks)hls.subtitleTracks.forEach((x,i)=>add('h'+i,x.name||x.lang||'#'+(i+1)));
+ SUB.nat=[...v.textTracks].filter(x=>!SUB.ext.some(e=>e.tr===x)&&(x.kind==='subtitles'||x.kind==='captions'));
+ SUB.nat.forEach((x,i)=>add('n'+i,x.label||x.language||'#'+(i+1)));
+ SUB.ext.forEach((x,i)=>add('e'+i,x.name));
+ sel.value=SUB.cur;
+ const A=$('subAud');A.textContent='';const at=(hls&&hls.audioTracks)||[];
+ at.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=x.name||x.lang||'#'+(i+1);A.append(o)});
+ if(hls&&at.length)A.value=hls.audioTrack;$('audRow').style.display=at.length>1?'flex':'none';
+}
+function subApply(val){
+ SUB.cur=val;const v=$('v');
+ [...v.textTracks].forEach(x=>{if(x.mode==='showing')x.mode='disabled'});
+ if(hls)hls.subtitleTrack=-1;
+ if(val==='-1')return;
+ const k=val[0],i=+val.slice(1);
+ if(k==='h'&&hls){hls.subtitleTrack=i;hls.subtitleDisplay=true}
+ else if(k==='n'&&SUB.nat[i])SUB.nat[i].mode='showing';
+ else if(k==='e'&&SUB.ext[i])SUB.ext[i].tr.mode='showing';
+}
+function subParse(txt){
+ txt=txt.replace(/\r/g,'').replace(/^\uFEFF/,'');
+ const re=/(?:(\d+):)?(\d{1,2}):(\d{2})[,.](\d{1,3})\s*-->\s*(?:(\d+):)?(\d{1,2}):(\d{2})[,.](\d{1,3})/,out=[];
+ const f=(h,m,s,ms)=>(+h||0)*3600+ +m*60+ +s+ +('0.'+ms);
+ txt.split(/\n\s*\n/).forEach(b=>{
+  const L=b.split('\n'),i=L.findIndex(l=>re.test(l));if(i<0)return;
+  const m=L[i].match(re),text=L.slice(i+1).join('\n').replace(/\{\\an?\d\}/g,'').trim();
+  if(text)out.push({s:f(m[1],m[2],m[3],m[4]),e:f(m[5],m[6],m[7],m[8]),text});
+ });
+ return out;
+}
+function subFill(x){
+ if(x.tr.mode==='disabled')x.tr.mode='hidden';
+ [...(x.tr.cues||[])].forEach(c=>x.tr.removeCue(c));
+ x.cues.forEach(c=>{try{x.tr.addCue(new VTTCue(Math.max(0,c.s+SUB.delay),Math.max(0.05,c.e+SUB.delay),c.text))}catch(e){}});
+}
+function subAddText(name,txt){
+ const cues=subParse(txt);if(!cues.length){toast(t('subBad'));return}
+ const tr=$('v').addTextTrack('subtitles',name,'und');tr.mode='hidden';
+ const x={name,cues,tr};SUB.ext.push(x);subFill(x);subList();
+ const val='e'+(SUB.ext.length-1);$('subSel').value=val;subApply(val);
+}
+function subDecode(buf){let s=new TextDecoder('utf-8').decode(buf);if(s.includes('\uFFFD')){try{s=new TextDecoder('windows-1256').decode(buf)}catch(e){}}return s}
+function subFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>subAddText(f.name,subDecode(r.result));r.readAsArrayBuffer(f);inp.value=''}
+async function subUrl(){const u=$('subU').value.trim();if(!u)return;try{const r=await fetch(u);if(!r.ok)throw 0;subAddText(u.split('/').pop().split('?')[0]||'subtitles',subDecode(await r.arrayBuffer()))}catch(e){toast(t('subBad'))}}
+function subDelayAdd(d){SUB.delay=Math.round((SUB.delay+d)*10)/10;$('subDelay').textContent=(SUB.delay>0?'+':'')+SUB.delay.toFixed(1);SUB.ext.forEach(subFill);if(SUB.cur[0]==='e')subApply(SUB.cur)}
+function subStyle(){const v=$('v'),z=$('subSz').value,c=$('subCl').value;v.style.setProperty('--sz',z+'%');v.style.setProperty('--sc',c);LS.s('subStyle',{z,c})}
+{const o=LS.g('subStyle',null);if(o){$('subSz').value=o.z;$('subCl').value=o.c;subStyle()}}
+const POS={t:0};
+$('v').addEventListener('timeupdate',()=>{
+ const v=$('v');if((mode!=='movies'&&mode!=='series')||!activeUrl||!v.duration||v.currentTime<5)return;
+ const n=Date.now();if(n-POS.t<5000)return;POS.t=n;
+ const o=LS.g('pos',{});if(v.currentTime>v.duration-30)delete o[activeUrl];else o[activeUrl]=Math.floor(v.currentTime);
+ const ks=Object.keys(o);if(ks.length>200)delete o[ks[0]];LS.s('pos',o);
+});
+$('v').addEventListener('loadedmetadata',()=>{const r=play.resume||0;play.resume=0;if(r>30){$('v').currentTime=r;toast(t('subResumed'))}});
+
+/* ===== ADAPTIVE LAYER (phone / computer / TV) ===== */
+function devAuto(){const ua=navigator.userAgent;if(/Android.*(TV|AFT|BRAVIA|SHIELD|Mi ?Box)|SmartTV|Tizen|Web0S|WebOS|GoogleTV|CrKey|HbbTV/i.test(ua))return 'tv';return(matchMedia('(pointer:fine)').matches&&innerWidth>=900)?'desktop':'phone'}
+function devApply(){const m=LS.g('dev','auto');document.documentElement.dataset.dev=m==='auto'?devAuto():m;const n=$('devNow');if(n)n.textContent=t('dev_'+m)}
+function devCycle(){const L=['auto','phone','desktop','tv'],m=LS.g('dev','auto');LS.s('dev',L[(L.indexOf(m)+1)%4]);devApply()}
+devApply();addEventListener('resize',()=>{if(LS.g('dev','auto')==='auto')devApply()});
+const _sl=setLang;setLang=function(l){_sl(l);devApply()};
+function spatial(box,k){
+ const els=[...box.querySelectorAll('[tabindex="0"],button,select,input:not([type=hidden]):not([type=file]),.nmc')].filter(e=>e.offsetParent&&!e.disabled);
+ const a=document.activeElement;
+ if(!els.includes(a)){els[0]&&els[0].focus();return}
+ const r=a.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bd=1e9;
+ els.forEach(e=>{if(e===a)return;const q=e.getBoundingClientRect(),x=q.left+q.width/2-cx,y=q.top+q.height/2-cy;
+  const h=k==='ArrowRight'||k==='ArrowLeft';
+  const ok=k==='ArrowRight'?x>4:k==='ArrowLeft'?x<-4:k==='ArrowDown'?y>4:y<-4;
+  if(!ok)return;const d=Math.hypot(x,y)+(h?Math.abs(y):Math.abs(x))*2.5;if(d<bd){bd=d;best=e}});
+ if(best){best.focus();best.scrollIntoView({block:'nearest'})}
+}
+document.addEventListener('keydown',e=>{
+ const k=(e.keyCode===23||e.key==='Select')?'Enter':e.key,a=document.activeElement,tag=a?a.tagName:'';
+ const ov=[...document.querySelectorAll('.ov')].find(x=>x.style.display==='flex');
+ const layer=$('nmDet').style.display==='flex'?$('nmDet'):$('newm').style.display==='block'?$('newm'):ov||($('settings').style.display==='block'?$('settings'):null);
+ if(layer){
+  if(k==='Escape'||k==='BrowserBack'||(k==='Backspace'&&tag!=='INPUT')){e.preventDefault();e.stopPropagation();closeTopLayer();return}
+  if(/^Arrow/.test(k)&&!(tag==='INPUT'&&(k==='ArrowLeft'||k==='ArrowRight'))&&!(tag==='SELECT'&&(k==='ArrowUp'||k==='ArrowDown'))){e.preventDefault();e.stopPropagation();spatial(layer,k)}
+  return;
+ }
+ if($('live').classList.contains('vod-playing')&&tag!=='INPUT'&&tag!=='SELECT'){
+  const v=$('v'),btn=tag==='BUTTON';let used=true;
+  if(k==='ArrowRight')v.currentTime+=10;else if(k==='ArrowLeft')v.currentTime-=10;
+  else if(k==='ArrowUp')v.volume=Math.min(1,v.volume+.1);else if(k==='ArrowDown')v.volume=Math.max(0,v.volume-.1);
+  else if((k===' '||k==='Enter')&&!btn)v.paused?v.play():v.pause();
+  else if(k==='k'||k==='MediaPlayPause')v.paused?v.play():v.pause();
+  else if(k==='f')fs();else if(k==='m')mute();else if(k==='c')subOpen();
+  else used=false;
+  if(used){e.preventDefault();e.stopPropagation()}
+ }
+},true);
+
+/* ===== INTERNET ARCHIVE: free public-domain movies & series (legal) ===== */
+const ARCH={movies:[['feature_films','Feature Films'],['Film_Noir','Film Noir'],['SciFi_Horror','Sci-Fi & Horror'],['silent_films','Silent Films'],['animationandcartoons','Animation']],series:[['classic_tv','Classic TV'],['classic_cartoons','Classic Cartoons']]};
+async function archiveItems(kind){
+ const key='archive:'+kind;if(cache[key])return cache[key];
+ const rows=await Promise.all(ARCH[kind].map(async([col,label])=>{
+  try{
+   const q=encodeURIComponent('collection:'+col+' AND mediatype:movies');
+   const r=await fetch('https://archive.org/advancedsearch.php?q='+q+'&fl%5B%5D=identifier&fl%5B%5D=title&sort%5B%5D=downloads+desc&rows=40&output=json');
+   const d=await r.json();
+   return(d.response&&d.response.docs||[]).map(x=>({name:String(x.title||x.identifier),url:'archive:'+x.identifier,logo:'https://archive.org/services/img/'+x.identifier,group:'🏛️ '+label}));
+  }catch(e){return[]}
+ }));
+ return cache[key]=[...new Map(rows.flat().map(x=>[x.url,x])).values()];
+}
+async function archiveResolve(c){
+ const id=c.url.slice(8);toast('⏳ '+c.name);
+ try{
+  const d=await(await fetch('https://archive.org/metadata/'+encodeURIComponent(id))).json();
+  const f=(d.files||[]).filter(x=>/\.mp4$/i.test(x.name));
+  const pick=f.find(x=>x.format==='h.264')||f.find(x=>/MPEG4/i.test(x.format||''))||f[0];
+  if(!pick)throw 0;
+  return{...c,url:'https://archive.org/download/'+encodeURIComponent(id)+'/'+encodeURIComponent(pick.name)};
+ }catch(e){toast(t('err'));return null}
+}
 </script>
 </body>
 </html>
