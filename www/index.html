@@ -1073,6 +1073,11 @@ document.addEventListener('keydown',e=>{
   if(/^Arrow/.test(k)&&!(tag==='INPUT'&&(k==='ArrowLeft'||k==='ArrowRight'))&&!(tag==='SELECT'&&(k==='ArrowUp'||k==='ArrowDown'))){e.preventDefault();e.stopPropagation();spatial(layer,k)}
   return;
  }
+ /* Live TV / lists screen: true spatial navigation (Left = left, Right = right, Up = up, Down = down) */
+ if($('live').style.display==='grid'&&!$('live').classList.contains('vod-playing')){
+  if(k==='Enter'&&tag==='SELECT'){e.preventDefault();e.stopPropagation();a.selectedIndex=(a.selectedIndex+1)%a.options.length;a.dispatchEvent(new Event('change',{bubbles:true}));toast(a.options[a.selectedIndex].text);return}
+  if(/^Arrow/.test(k)&&!(tag==='INPUT'&&(k==='ArrowLeft'||k==='ArrowRight'))){e.preventDefault();e.stopPropagation();spatial($('live'),k);return}
+ }
  if($('live').classList.contains('vod-playing')&&tag!=='INPUT'&&tag!=='SELECT'){
   const v=$('v'),btn=tag==='BUTTON';let used=true;
   if(k==='ArrowRight')v.currentTime+=10;else if(k==='ArrowLeft')v.currentTime-=10;
