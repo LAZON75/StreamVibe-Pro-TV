@@ -369,6 +369,13 @@ html[data-dev=desktop] #nmGrid,html[data-dev=tv] #nmGrid{grid-template-columns:r
 html[data-dev=desktop] .pbcards,html[data-dev=tv] .pbcards{gap:clamp(14px,2vw,28px)}
 html[data-dev=desktop] .box,html[data-dev=tv] .box{max-width:560px}
 html[data-dev=desktop] .nmc:hover{transform:translateY(-3px)}
+
+/* Language picker: big focusable buttons instead of a <select> (works with TV remote) */
+.lopts{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.lopt{width:100%;padding:14px 16px;border-radius:12px;border:2px solid var(--bd);background:rgba(255,255,255,.08);color:var(--txt);font-size:17px;font-weight:700;cursor:pointer;text-align:start;display:flex;justify-content:space-between;align-items:center}
+.lopt.on{border-color:var(--pri);background:rgba(34,211,238,.18)}
+.lopt.on:after{content:"✓";color:var(--pri);font-size:20px}
+.lopt:focus,.lopt:hover{outline:3px solid #fff;outline-offset:1px}
 </style>
 </head>
 <body onload="init()">
@@ -412,7 +419,7 @@ html[data-dev=desktop] .nmc:hover{transform:translateY(-3px)}
  <div class="sgrid">
   <div class="sb" onclick="openM('mPl')">🔗 <span data-i="addPl"></span></div>
   <div class="sb" id="bPar" onclick="togglePar()">🔒 <span data-i="par"></span></div>
-  <div class="sb" onclick="openM('mLang')">🌐 <span data-i="lang"></span></div>
+  <div class="sb" onclick="openM('mLang');langOpen()">🌐 <span data-i="lang"></span></div>
   <div class="sb" onclick="toggleTheme()">🎨 <span data-i="theme"></span></div>
   <div class="sb" id="bExt" onclick="toggleExt()">▶️ <span data-i="ext"></span></div>
   <div class="sb" onclick="devCycle()">🖥️ <span><span data-i="devMode"></span>: <b id="devNow"></b></span></div>
@@ -439,8 +446,13 @@ html[data-dev=desktop] .nmc:hover{transform:translateY(-3px)}
  <button class="btn" style="width:100%" onclick="addCustom()" data-i="load"></button>
 </div></div>
 <div class="ov" id="mLang"><div class="box">
- <h3><span data-i="lang"></span><b onclick="closeM('mLang')">✕</b></h3>
- <select id="langSel"><option value="ar">العربية</option><option value="fr">Français</option><option value="en">English</option></select>
+  <h3><span data-i="lang"></span><b tabindex="0" role="button" onclick="closeM('mLang')">✕</b></h3>
+  <input type="hidden" id="langSel" value="ar">
+  <div class="lopts" id="langOpts">
+   <button type="button" class="lopt" data-l="ar" onclick="langPick('ar')">العربية</button>
+   <button type="button" class="lopt" data-l="fr" onclick="langPick('fr')">Français</button>
+   <button type="button" class="lopt" data-l="en" onclick="langPick('en')">English</button>
+  </div>
  <button class="btn" style="width:100%" onclick="setLang($('langSel').value);closeM('mLang')" data-i="save"></button>
 </div></div>
 <div class="ov" id="mPin"><div class="box" style="text-align:center;max-width:340px">
@@ -560,7 +572,7 @@ function init(){
  const go=el=>{if(el){el.focus();el.scrollIntoView({block:'nearest'})}};
  document.addEventListener('keydown',e=>{
   const k=(e.keyCode===23||e.key==='Select')?'Enter':e.key,a=document.activeElement;
-  if(live()&&(k==='Escape'||k==='Backspace'||k==='BrowserBack'||e.keyCode===4)){e.preventDefault();closeLive();return}
+  if(live()&&(k==='Escape'||k==='BrowserBack'||e.keyCode===4||(k==='Backspace'&&!/^(INPUT|TEXTAREA|SELECT)$/.test(a?a.tagName:'')))){e.preventDefault();handleBack();return}
   if(a&&a.tagName==='INPUT'){if(k==='ArrowDown'||k==='ArrowUp')a.blur();else return}
   if(k==='Enter'&&a&&a.matches('[tabindex="0"]')){e.preventDefault();a.click();return}
   if(!live()){
@@ -594,7 +606,7 @@ function setLang(l){
  const r=$('r');r.lang=l;r.dir=l==='ar'?'rtl':'ltr';
  document.querySelectorAll('[data-i]').forEach(e=>{if(T[l][e.dataset.i]!==undefined&&!e.closest('#chList'))e.textContent=t(e.dataset.i)});
  document.querySelectorAll('[data-ph]').forEach(e=>e.placeholder=t(e.dataset.ph));
- $('langSel').value=l;const hb=$('live').querySelector('.home-btn');if(hb){const label=l==='ar'?'الصفحة الرئيسية':l==='fr'?'Accueil':'Home';hb.setAttribute('aria-label',label);hb.title=label;}renderSide();renderCh();renderHome();
+ $('langSel').value=l;langMark(l);const hb=$('live').querySelector('.home-btn');if(hb){const label=l==='ar'?'الصفحة الرئيسية':l==='fr'?'Accueil':'Home';hb.setAttribute('aria-label',label);hb.title=label;}renderSide();renderCh();renderHome();
 }
 function syncBtns(){$('bPar').classList.toggle('on',!!LS.g('par',false));$('bExt').classList.toggle('on',!!LS.g('ext',false))}
 function toggleTheme(){const l=document.body.classList.toggle('light');LS.s('theme',l?'light':'dark')}
@@ -949,11 +961,27 @@ function closeTopLayer(){
  return false;
 }
 try{history.replaceState({r:1},'');history.pushState({a:1},'')}catch(e){}
+/* One handler for every Back source (key event + browser history), de-duplicated so one press = one step */
+let _backT=0,exitArmed=false;
+function handleBack(){const n=Date.now();if(n-_backT<450)return true;_backT=n;return closeTopLayer()}
 window.addEventListener('popstate',()=>{
- if(closeTopLayer()){ensureSentinel();return}
- toast(t('exitHint'));setTimeout(ensureSentinel,2000);
+  const n=Date.now();
+  if(n-_backT<450){ensureSentinel();return}          /* same press already handled by the key event */
+  _backT=n;
+  if(closeTopLayer()){ensureSentinel();return}       /* went back one step: stay in the app */
+  if(exitArmed)return;                               /* 2nd press on Home within 2s: let the system close the app */
+  exitArmed=true;toast(t('exitHint'));
+  clearTimeout(window._exT);window._exT=setTimeout(()=>{exitArmed=false;ensureSentinel()},2000);
 });
-['click','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,ensureSentinel,true));
+['click','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,e=>{
+  if(ev==='keydown'&&(e.key==='Escape'||e.key==='BrowserBack'||e.key==='Backspace'||e.keyCode===4))return;
+  exitArmed=false;ensureSentinel();
+},true));
+
+/* ===== LANGUAGE PICKER (remote-friendly) ===== */
+function langMark(l){document.querySelectorAll('#langOpts .lopt').forEach(b=>b.classList.toggle('on',b.dataset.l===l))}
+function langPick(l){$('langSel').value=l;langMark(l);const sv=document.querySelector('#mLang .btn');sv&&sv.focus()}
+function langOpen(){const l=lang;$('langSel').value=l;langMark(l);setTimeout(()=>{const b=document.querySelector('#langOpts .lopt.on');b&&b.focus()},60)}
 
 /* ===== SUBTITLES, AUDIO TRACKS, SPEED, RESUME ===== */
 const SUB={ext:[],nat:[],cur:'-1',delay:0};
@@ -1041,7 +1069,7 @@ document.addEventListener('keydown',e=>{
  const ov=[...document.querySelectorAll('.ov')].find(x=>x.style.display==='flex');
  const layer=$('nmDet').style.display==='flex'?$('nmDet'):$('newm').style.display==='block'?$('newm'):ov||($('settings').style.display==='block'?$('settings'):null);
  if(layer){
-  if(k==='Escape'||k==='BrowserBack'||(k==='Backspace'&&tag!=='INPUT')){e.preventDefault();e.stopPropagation();closeTopLayer();return}
+  if(k==='Escape'||k==='BrowserBack'||(k==='Backspace'&&tag!=='INPUT')){e.preventDefault();e.stopPropagation();handleBack();return}
   if(/^Arrow/.test(k)&&!(tag==='INPUT'&&(k==='ArrowLeft'||k==='ArrowRight'))&&!(tag==='SELECT'&&(k==='ArrowUp'||k==='ArrowDown'))){e.preventDefault();e.stopPropagation();spatial(layer,k)}
   return;
  }
